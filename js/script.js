@@ -49,8 +49,7 @@ ScrollReveal({
 
 ScrollReveal().reveal('.home-content, .heading', { origin: 'top' });
 ScrollReveal().reveal('.home-img, .services-container, .portfolio-box, .contact form', { origin: 'bottom' });
-ScrollReveal().reveal('.home-content h1, .about-img', { origin: 'left' });
-ScrollReveal().reveal('.home-content p, .about-content', { origin: 'right' });
+ScrollReveal().reveal('.home-content h1, .home-content p, .about-content, .about-img', { origin: 'left' });
 
 
 //typed js
@@ -86,6 +85,7 @@ function validateForm(message) {
   })
 
   if(message.name !== '' && message.email !== '' && message.mobileNumber !== '' && message.EmailSubject !== '' && message.message !== '') {
+
     sendMessage.style.display='none';
     thankMessages.classList.toggle('active');
     sendMessage.reset();
@@ -94,7 +94,6 @@ function validateForm(message) {
     thankMessages.classList.toggle('active');
     sendMessage.style.display='block';
    }, 5000);
-
    return true;
   }
 
@@ -109,7 +108,11 @@ sendMessage.addEventListener('submit', (e) => {
   e.preventDefault();
   const message = Object.fromEntries(new FormData(e.target));
   if(validateForm(message)) {
-    const text = JSON.stringify(message);
-    fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&parse_mode=html&text=${text})`)
+    let text = '';
+    for(const [key, values] of Object.entries(message)) {
+      text += `${key}: ${values}, \n`;
+    }
+    text = encodeURI(text);
+    fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&parse_mode=html&text=${text}`)
   }
 });
